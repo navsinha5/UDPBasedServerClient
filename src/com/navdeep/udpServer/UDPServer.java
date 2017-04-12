@@ -3,7 +3,13 @@ package com.navdeep.udpServer;
 import java.io.*;
 import java.net.*;
 
+import com.amazonaws.demos.polly.PollyEngine;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+
 public class UDPServer {
+	
+	public static String incomingStr = "not received anything yet";
 
 	public static void main(String[] args) {
 		
@@ -24,10 +30,19 @@ public class UDPServer {
 			while(true){
 				socket.receive(incoming);
 				byte[] data = incoming.getData();
-				String incomingStr = new String(data, 0, incoming.getLength());
+				incomingStr = new String(data, 0, incoming.getLength());
 				
 				//echo the details of incoming data - client ip : client port - client message
 				echo(incoming.getAddress().getHostAddress()+ ":" + incoming.getPort() + "-" + incomingStr);
+				
+				//calling pollyEngine
+				PollyEngine pollyEngine = new PollyEngine(Region.getRegion(Regions.US_EAST_1));
+				try {
+					pollyEngine.initialize(incomingStr);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				
 				incomingStr = "OK :" + incomingStr;
 				DatagramPacket outgoing = new DatagramPacket(incomingStr.getBytes(), incomingStr.getBytes().length, incoming.getAddress(), incoming.getPort());
