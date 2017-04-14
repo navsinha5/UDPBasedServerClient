@@ -35,6 +35,7 @@ public class UDPServer {
 				//echo the details of incoming data - client ip : client port - client message
 				echo(incoming.getAddress().getHostAddress()+ ":" + incoming.getPort() + "-" + incomingStr);
 
+				//play the message with polly
 				demo.pollyPlay(incomingStr);
 				
 				incomingStr = "OK :" + incomingStr;
