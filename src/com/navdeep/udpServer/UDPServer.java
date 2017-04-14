@@ -3,17 +3,17 @@ package com.navdeep.udpServer;
 import java.io.*;
 import java.net.*;
 
-import com.amazonaws.demos.polly.PollyEngine;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
+import com.amazonaws.demos.polly.PollyEngineDemo;
+
 
 public class UDPServer {
 	
 	public static String incomingStr = "not received anything yet";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		
 		DatagramSocket socket = null;
+		PollyEngineDemo demo = new PollyEngineDemo();
 		
 		try{
 			//1. creating server socket, port 7777 as parameter
@@ -34,18 +34,12 @@ public class UDPServer {
 				
 				//echo the details of incoming data - client ip : client port - client message
 				echo(incoming.getAddress().getHostAddress()+ ":" + incoming.getPort() + "-" + incomingStr);
-				
-				//calling pollyEngine
-				PollyEngine pollyEngine = new PollyEngine(Region.getRegion(Regions.US_EAST_1));
-				try {
-					pollyEngine.initialize(incomingStr);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+
+				demo.pollyPlay(incomingStr);
 				
 				incomingStr = "OK :" + incomingStr;
-				DatagramPacket outgoing = new DatagramPacket(incomingStr.getBytes(), incomingStr.getBytes().length, incoming.getAddress(), incoming.getPort());
+				DatagramPacket outgoing = new DatagramPacket(incomingStr.getBytes(),
+						incomingStr.getBytes().length, incoming.getAddress(), incoming.getPort());
 				socket.send(outgoing);
 			}
 			
